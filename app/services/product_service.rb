@@ -3,8 +3,22 @@
 class ProductService
   PRODUCT_FIELDS = %i[id name description price stock sku image_urls].freeze
 
-  def list
-    Product.where(deleted_at: nil).select(*PRODUCT_FIELDS)
+  def list(filters = {})
+    products = Product.where(deleted_at: nil)
+
+    if filters[:category_id].present?
+      products = products.where(category_id: filters[:category_id])
+    end
+
+    if filters[:search].present?
+      query = "%#{filters[:search]}%"
+      products = products.where(
+        'name ILIKE :q OR description ILIKE :q OR sku ILIKE :q',
+        q: query
+      )
+    end
+
+    products.select(*PRODUCT_FIELDS)
   end
 
   def find(id)

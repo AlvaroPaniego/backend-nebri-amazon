@@ -1,111 +1,147 @@
-# 📦 NebriAmazon - Backend API 🚀
+# 📦 NebriAmazon - Backend API
 
-[![Node.js Version](https://img.shields.io/badge/node-%3E%3D%2018.0.0-blue.svg?style=flat-square)](https://nodejs.org/)
-[![API Status](https://img.shields.io/badge/api-active-emerald.svg?style=flat-square)](#)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=flat-square)](https://opensource.org/licenses/MIT)
-
-Este repositorio contiene la **API REST** y la lógica del servidor para **NebriAmazon**, una plataforma de comercio electrónico inspirada en Amazon, desarrollada como proyecto académico para la **Universidad Nebrija**.
-
-El backend se encarga de gestionar la persistencia de datos, la lógica de negocio, la autenticación de usuarios y la pasarela de pedidos/carrito de compra.
+API REST de comercio electrónico para **NebriAmazon**, proyecto académico de la **Universidad Nebrija**. Construida con Ruby on Rails 7 (API-only), PostgreSQL y JWT.
 
 ---
 
-## 🛠️ Tecnologías y Herramientas
+## 🛠️ Tecnologías
 
-El backend está diseñado utilizando un stack robusto y moderno:
-
-*   **Entorno de Ejecución:** [Node.js](https://nodejs.org/) (o similar)
-*   **Framework:** [Express.js](https://expressjs.com/) / Fastify (API REST estructurada)
-*   **Base de Datos:** MongoDB / PostgreSQL (Mongoose / Sequelize / Prisma ORM)
-*   **Autenticación:** JWT (JSON Web Tokens) & Bcrypt para encriptación de contraseñas
-*   **Herramientas de Test:** Jest / Supertest
-
----
-
-## ✨ Características Principales
-
-*   🔒 **Autenticación Segura:** Registro de usuarios, inicio de sesión y gestión de sesiones mediante JSON Web Tokens (JWT).
-*   🛍️ **Catálogo de Productos:** Operaciones CRUD (Crear, Leer, Actualizar, Borrar) para productos, categorías y filtrado avanzado.
-*   🛒 **Carrito y Pedidos:** Gestión de carritos de compra persistentes y simulación del proceso de checkout y pago.
-*   👤 **Perfiles de Usuario:** Gestión de datos de usuario, direcciones de envío e historial de pedidos.
-*   🛡️ **Seguridad:** Middlewares para el manejo de errores, prevención de CORS, inyección SQL/NoSQL y límites de peticiones (rate limiting).
+| Tecnología | Versión | Propósito |
+|------------|---------|-----------|
+| **Ruby** | >= 3.2 | Lenguaje de programación |
+| **Rails** | 7.1 (API-only) | Framework web |
+| **PostgreSQL** | >= 14 | Base de datos relacional |
+| **Puma** | ~6.0 | Servidor web |
+| **JWT** | — | Autenticación sin estado |
+| **Bcrypt** | — | Hash de contraseñas |
+| **Rack-CORS** | — | Control de acceso cross-origin |
+| **RSpec** | — | Testing |
 
 ---
 
-## 📂 Estructura del Proyecto
+## ✨ Características
 
-Una arquitectura modular y limpia para facilitar la escalabilidad:
+- **Autenticación JWT** — Registro, login y perfil con roles (admin / customer).
+- **Catálogo** — CRUD de productos con filtros por categoría y búsqueda textual.
+- **Categorías** — Listado de categorías para filtrar productos.
+- **Carrito persistente** — Carrito en base de datos sincronizado por usuario.
+- **Pedidos** — Creación de pedidos con bloqueo pesimista (`SELECT FOR UPDATE`) para prevenir venta excesiva.
+- **Chatbot** — Endpoint de asistencia virtual pasiva.
+- **CORS** — Configurado para desarrollo con Vite (puerto 5173).
+
+---
+
+## 📂 Estructura
 
 ```text
 backend-nebri-amazon/
-├── config/             # Configuración de base de datos y variables globales
-├── controllers/        # Controladores de la lógica de negocio para cada ruta
-├── middlewares/        # Middlewares de seguridad, validación y autenticación
-├── models/             # Modelos y esquemas de la Base de Datos
-├── routes/             # Definición de endpoints de la API (index, auth, products...)
-├── utils/              # Funciones auxiliares y utilidades comunes
-├── .env.template       # Plantilla para variables de entorno
-├── app.js              # Inicialización de la aplicación Express
-└── server.js           # Punto de entrada del servidor
+├── app/
+│   ├── controllers/api/   # Controladores REST (auth, products, cart, orders, chatbot, categories)
+│   ├── models/            # Modelos ActiveRecord (User, Product, Cart, Order, Category...)
+│   └── services/          # Service Objects (lógica de negocio desacoplada)
+├── config/
+│   ├── routes.rb          # Definición de rutas
+│   └── initializers/      # Configuración (CORS, JWT...)
+├── db/
+│   ├── migrate/           # Migraciones PostgreSQL
+│   └── seeds.rb           # Datos de prueba (4 categorías, 20 productos)
+└── spec/                  # Tests RSpec
 ```
 
 ---
 
-## 🚀 Cómo Empezar (Desarrollo)
+## 🚀 Requisitos e Instalación
 
-### 1. Requisitos Previos
+### 1. Requisitos previos
 
-Asegúrate de tener instalado:
-*   [Node.js](https://nodejs.org/) (versión 18 o superior)
-*   [npm](https://www.npmjs.com/) (generalmente viene con Node) o [yarn](https://yarnpkg.com/)
-*   Una base de datos activa (local o en la nube como MongoDB Atlas / Supabase)
+- **Ruby 3.2+** — Instalar con [rbenv](https://github.com/rbenv/rbenv) o [rvm](https://rvm.io/):
+  ```bash
+  rbenv install 3.2.2
+  rbenv global 3.2.2
+  ```
+- **PostgreSQL 14+** — Instalar con el gestor de paquetes del sistema:
+  ```bash
+  # Ubuntu/Debian
+  sudo apt install postgresql postgresql-contrib libpq-dev
+  # macOS
+  brew install postgresql@16
+  ```
+- **Bundler** — Gestor de dependencias Ruby:
+  ```bash
+  gem install bundler
+  ```
 
-### 2. Instalación de Dependencias
-
-Clona e instala los paquetes necesarios dentro del directorio del backend:
+### 2. Clonar e instalar dependencias
 
 ```bash
 cd backend-nebri-amazon
-npm install
+bundle install
 ```
 
-### 3. Configuración de Variables de Entorno
+### 3. Configurar base de datos
 
-Crea un archivo `.env` en la raíz de esta carpeta basándote en `.env.template`:
+Edita `config/database.yml` si es necesario (usuario, contraseña, host). Por defecto usa `dummy_app_development` con el usuario del sistema.
+
+Crear la base de datos y ejecutar migraciones:
 
 ```bash
-PORT=5000
-MONGODB_URI=mongodb://localhost:27017/nebriamazon
-JWT_SECRET=tu_clave_secreta_super_segura
-NODE_ENV=development
+bin/rails db:create
+bin/rails db:migrate
 ```
 
-### 4. Ejecución del Servidor
-
-Para iniciar el servidor en modo desarrollo con recarga automática:
+### 4. Poblar con datos de prueba
 
 ```bash
-npm run dev
+bin/rails db:seed
 ```
 
-El servidor estará escuchando en `http://localhost:5000` (o el puerto configurado).
+Esto crea 4 categorías y 20 productos (5 por categoría).
+
+### 5. Iniciar el servidor
+
+```bash
+bin/rails server
+```
+
+El servidor arranca en `http://localhost:3000`.
 
 ---
 
-## 🔗 Endpoints Principales (Resumen)
+## 🔗 Endpoints de la API
 
-| Método | Endpoint | Descripción | Requiere Auth |
+| Método | Endpoint | Descripción | Auth |
 | :--- | :--- | :--- | :---: |
-| **POST** | `/api/auth/register` | Registro de nuevo usuario | ❌ |
-| **POST** | `/api/auth/login` | Login y obtención del token | ❌ |
-| **GET** | `/api/products` | Obtener lista de productos con filtros | ❌ |
-| **GET** | `/api/products/:id` | Detalle de un producto específico | ❌ |
-| **POST** | `/api/cart` | Añadir producto al carrito | 🔑 |
-| **GET** | `/api/cart` | Obtener el carrito del usuario | 🔑 |
-| **POST** | `/api/orders` | Procesar compra (Checkout) | 🔑 |
+| **POST** | `/api/auth/register` | Registrar nuevo usuario | ❌ |
+| **POST** | `/api/auth/login` | Iniciar sesión (devuelve JWT) | ❌ |
+| **GET** | `/api/auth/me` | Perfil del usuario autenticado | 🔑 |
+| **GET** | `/api/categories` | Listar todas las categorías | ❌ |
+| **GET** | `/api/categories/:id` | Detalle de una categoría | ❌ |
+| **GET** | `/api/products` | Listar productos (`?category_id=X&search=Y`) | ❌ |
+| **GET** | `/api/products/:id` | Detalle de un producto | ❌ |
+| **POST** | `/api/products` | Crear producto (admin) | 🔑 |
+| **PUT** | `/api/products/:id` | Actualizar producto (admin) | 🔑 |
+| **DELETE** | `/api/products/:id` | Eliminar producto lógico (admin) | 🔑 |
+| **GET** | `/api/cart` | Ver carrito del usuario | 🔑 |
+| **POST** | `/api/cart/items` | Añadir ítem al carrito | 🔑 |
+| **PUT** | `/api/cart/items/:id` | Actualizar cantidad de ítem | 🔑 |
+| **DELETE** | `/api/cart/items/:id` | Eliminar ítem del carrito | 🔑 |
+| **POST** | `/api/orders` | Crear pedido (checkout) | 🔑 |
+| **GET** | `/api/orders` | Listar pedidos del usuario | 🔑 |
+| **GET** | `/api/orders/:id` | Detalle de un pedido | 🔑 |
+| **POST** | `/api/chatbot` | Enviar mensaje al chatbot | ❌ |
+
+> 🔑 = Requiere header `Authorization: Bearer <token>`
+
+---
+
+## 🧪 Tests
+
+```bash
+bin/rails spec
+```
 
 ---
 
 ## 📜 Licencia
 
-Este proyecto está bajo la Licencia MIT. Consulta el archivo `LICENSE` para más detalles (si aplica).
+MIT

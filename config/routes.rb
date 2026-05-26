@@ -5,6 +5,9 @@ Rails.application.routes.draw do
     post 'auth/login', to: 'authentication#login'
     get  'auth/me', to: 'authentication#me'
 
+    # Categories
+    resources :categories, only: [:index, :show]
+
     # Products
     resources :products, only: [:index, :show, :create, :update, :destroy]
 

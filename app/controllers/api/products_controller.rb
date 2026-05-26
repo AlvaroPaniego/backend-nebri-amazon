@@ -5,7 +5,7 @@ class Api::ProductsController < ApplicationController
 
   # GET /api/products
   def index
-    render json: ProductService.new.list
+    render json: ProductService.new.list(filter_params)
   end
 
   # GET /api/products/:id
@@ -42,5 +42,7 @@ class Api::ProductsController < ApplicationController
     render json: { error: 'NotFound', message: 'Producto no encontrado' }, status: :not_found
   end
 
-
+  def filter_params
+    params.permit(:category_id, :search)
+  end
 end
