@@ -1,6 +1,6 @@
 source "https://rubygems.org"
 
-ruby "~> 3.2"
+ruby "~> 3.4"
 
 # Core Rails framework (API mode)
 gem "rails", "~> 7.1.0"
