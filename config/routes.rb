@@ -12,7 +12,8 @@ Rails.application.routes.draw do
     resources :products, only: [:index, :show, :create, :update, :destroy]
 
     # Cart (singleton)
-    resource :cart, only: [:show] do
+    resource :cart, only: [:show, :destroy] do
+      post :sync
       resources :items, controller: 'cart_items', only: [:create, :update, :destroy]
     end
 
