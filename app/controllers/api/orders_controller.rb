@@ -6,7 +6,11 @@ class Api::OrdersController < ApplicationController
 
   # POST /api/orders – delega la creación al CreateOrderService
   def create
-    order = CreateOrderService.new(current_user).call
+    order = CreateOrderService.new(
+      current_user,
+      shipping_params: params[:shipping],
+      payment_params: params[:payment]
+    ).call
     render json: OrderService.summary_payload(order), status: :created
   rescue StockManagementService::InsufficientStockError => e
     render json: { error: 'InsufficientStock', message: e.message }, status: :unprocessable_entity

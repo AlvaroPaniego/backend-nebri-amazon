@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2026_05_24_171716) do
+ActiveRecord::Schema[7.1].define(version: 2026_05_27_190202) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -58,8 +58,20 @@ ActiveRecord::Schema[7.1].define(version: 2026_05_24_171716) do
     t.decimal "total_price", precision: 12, scale: 2, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "tracking_code"
     t.index ["created_at"], name: "index_orders_on_created_at"
+    t.index ["tracking_code"], name: "index_orders_on_tracking_code", unique: true
     t.index ["user_id"], name: "index_orders_on_user_id"
+  end
+
+  create_table "payments", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "order_id", null: false
+    t.string "cardholder_name"
+    t.string "card_last_four"
+    t.string "expiry"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["order_id"], name: "index_payments_on_order_id"
   end
 
   create_table "products", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -78,6 +90,18 @@ ActiveRecord::Schema[7.1].define(version: 2026_05_24_171716) do
     t.index ["sku"], name: "index_products_on_sku", unique: true
   end
 
+  create_table "shipping_addresses", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "order_id", null: false
+    t.string "full_name"
+    t.string "address"
+    t.string "city"
+    t.string "postal_code"
+    t.string "country"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["order_id"], name: "index_shipping_addresses_on_order_id"
+  end
+
   create_table "users", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.string "name", null: false
     t.string "email", null: false
@@ -94,5 +118,7 @@ ActiveRecord::Schema[7.1].define(version: 2026_05_24_171716) do
   add_foreign_key "order_items", "orders"
   add_foreign_key "order_items", "products"
   add_foreign_key "orders", "users"
+  add_foreign_key "payments", "orders"
   add_foreign_key "products", "categories"
+  add_foreign_key "shipping_addresses", "orders"
 end

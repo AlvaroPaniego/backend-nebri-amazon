@@ -16,7 +16,7 @@ class OrderService
   end
 
   def self.summary_payload(order)
-    { id: order.id, status: order.status, total_price: order.total_price }
+    { id: order.id, status: order.status, total_price: order.total_price, tracking_code: order.tracking_code }
   end
 
   def self.detail_payload(order)
