@@ -6,7 +6,29 @@ class OrderService
   end
 
   def list
-    @user.orders.order(created_at: :desc).select(:id, :status, :total_price, :created_at)
+    @user.orders
+          .order(created_at: :desc)
+          .includes(order_items: :product)
+          .map do |order|
+      {
+        id: order.id,
+        status: order.status,
+        total_price: order.total_price,
+        created_at: order.created_at,
+        items: order.order_items.map do |oi|
+          {
+            product_id: oi.product_id,
+            quantity: oi.quantity,
+            price_snapshot: oi.price_snapshot,
+            product: {
+              name: oi.product.name,
+              sku: oi.product.sku,
+              image_url: oi.product.image_urls&.first
+            }
+          }
+        end
+      }
+    end
   end
 
   def find(id)
@@ -24,11 +46,16 @@ class OrderService
       id: order.id,
       status: order.status,
       total_price: order.total_price,
-      items: order.order_items.map do |oi|
+      items: order.order_items.includes(:product).map do |oi|
         {
           product_id: oi.product_id,
           quantity: oi.quantity,
-          price_snapshot: oi.price_snapshot
+          price_snapshot: oi.price_snapshot,
+          product: {
+            name: oi.product.name,
+            sku: oi.product.sku,
+            image_url: oi.product.image_urls&.first
+          }
         }
       end
     }
