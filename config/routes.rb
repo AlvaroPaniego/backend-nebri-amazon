@@ -6,7 +6,10 @@ Rails.application.routes.draw do
     get  'auth/me', to: 'authentication#me'
 
     # Categories
-    resources :categories, only: [:index, :show]
+    resources :categories, only: [:index, :show] do
+      # GET /api/categories/:category_id/products
+      resources :products, only: [:index], controller: 'products'
+    end
 
     # Products
     resources :products, only: [:index, :show, :create, :update, :destroy]

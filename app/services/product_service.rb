@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class ProductService
-  PRODUCT_FIELDS = %i[id name description price stock sku image_urls].freeze
+  PRODUCT_FIELDS = %i[id name description price stock sku image_urls category_id].freeze
 
   def list(filters = {})
     products = Product.where(deleted_at: nil)
